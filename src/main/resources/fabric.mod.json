@@ -1,0 +1,39 @@
+{
+	"schemaVersion": 1,
+	"id": "occult-smp",
+	"version": "${version}",
+	"name": "Occult Smp",
+	"description": "Twist Mod For Occult Smp",
+	"authors": [
+		"Voidddragon"
+	],
+	"contact": {
+		"homepage": "https://voidddragon.net/",
+		"sources": "https://github.com/Voidddragon/Occult-Smp?tab=readme-ov-file"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/occult-smp/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"occult.smp.OccultSmp"
+		],
+		"fabric-datagen": [
+			"occult.smp.OccultSmpDataGenerator"
+		],
+      "client": [
+        "occult.smp.OccultSmpClient"]
+	},
+	"mixins": [
+		"occult-smp.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.17.2",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
