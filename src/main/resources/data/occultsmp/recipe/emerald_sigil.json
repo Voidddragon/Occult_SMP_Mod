@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "show_notification": false,
+  "pattern": [
+    "#L#",
+    "BTG",
+    "#S#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:emerald_block"
+    },
+    "L": {
+      "item": "minecraft:lectern"
+    },
+    "B": {
+      "item": "minecraft:blast_furnace"
+    },
+    "T": {
+      "item": "minecraft:totem_of_undying"
+    },
+    "G": {
+      "item": "minecraft:grindstone"
+    },
+    "S": {
+      "item": "minecraft:brewing_stand"
+    }
+  },
+  "result": {
+    "id": "occult_smp:emerald_sigil",
+    "count": 1
+  }
+}

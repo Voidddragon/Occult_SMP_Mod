@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "show_notification": false,
+  "key": {
+    "#": {
+      "item": "minecraft:diamond_block"
+    },
+    "F": {
+      "item": "minecraft:feather"
+    },
+    "B": {
+      "item": "minecraft:breeze_rod"
+    }
+  },
+  "pattern": [
+    "#F#",
+    "FBF",
+    "#F#"
+  ],
+  "result": {
+    "id": "occult_smp:leap_sigil",
+    "count": 1
+  }
+}
