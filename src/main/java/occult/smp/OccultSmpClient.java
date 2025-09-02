@@ -2,6 +2,7 @@ package occult.smp;
 
 import net.fabricmc.api.ClientModInitializer;
 import occult.smp.Network.OccultServerEvents;
+import occult.smp.Network.SettingsSyncPackets;
 import occult.smp.Network.SigilSyncPackets;
 import occult.smp.Sigil.Gui.OccultHudConfig;
 import occult.smp.Sigil.Gui.OpenHudSettings;
@@ -19,5 +20,6 @@ public class OccultSmpClient implements ClientModInitializer {
         OpenHudSettings.register();
         SigilSyncPackets.registerClient();
         OccultServerEvents.register();
+        SettingsSyncPackets.registerClient();
     }
 }
