@@ -25,6 +25,8 @@ public class OccultServerEvents {
             // ✅ Sync keybind settings
             KeybindSettings keybinds = ((KeybindSettingsData) player).occult_smp$getKeybindSettings();
             // TODO: send keybinds to client via packet
+
+
         });
     }
 }
