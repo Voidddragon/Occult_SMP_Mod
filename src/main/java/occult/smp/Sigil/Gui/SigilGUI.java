@@ -6,14 +6,15 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.Identifier;
-
 import occult.smp.Sigil.AbilitySlot.Ability;
 import occult.smp.Sigil.AbilitySlot.AbilityRegistry;
 import occult.smp.Sigil.AbilitySlot.AbilitySlot;
 import occult.smp.Sigil.SigilType;
-import occult.smp.ClientSigilState;
+import occult.smp.Sigil.ClientSigilState;
+
 
 public final class SigilGUI implements HudRenderCallback {
+
     private static final int BASE_SLOT_SIZE = 40;
     private static final int PADDING = 6;
     private static final int BORDER = 2;
@@ -36,19 +37,19 @@ public final class SigilGUI implements HudRenderCallback {
         Ability primary = AbilityRegistry.get(sigil, AbilitySlot.PRIMARY);
         Ability secondary = AbilityRegistry.get(sigil, AbilitySlot.SECONDARY);
 
-        int scaledSize = (int)(BASE_SLOT_SIZE * OccultHudConfig.hudScale);
+        int scaledSize = (int) (BASE_SLOT_SIZE * OccultHudConfig.hudScale);
         int totalWidth = scaledSize * 2 + PADDING;
         int sw = ctx.getScaledWindowWidth();
         int sh = ctx.getScaledWindowHeight();
         int x = (sw - totalWidth) / 2;
         int y = sh + OccultHudConfig.hudOffsetY;
 
-        drawSlot(ctx, x, y, primary != null ? primary.icon() : null, scaledSize);
+        drawSlot(ctx, x, y, primary != null ? primary.icon() : null, scaledSize, sigil, AbilitySlot.PRIMARY);
         x += scaledSize + PADDING;
-        drawSlot(ctx, x, y, secondary != null ? secondary.icon() : null, scaledSize);
+        drawSlot(ctx, x, y, secondary != null ? secondary.icon() : null, scaledSize, sigil, AbilitySlot.SECONDARY);
     }
 
-    private void drawSlot(DrawContext ctx, int x, int y, String iconName, int size) {
+    private void drawSlot(DrawContext ctx, int x, int y, String iconName, int size, SigilType sigilType, AbilitySlot slot) {
         fillBorder2px(ctx, x, y, size, size, BORDER_COLOR);
 
         if (iconName == null || iconName.isEmpty()) return;
@@ -58,15 +59,30 @@ public final class SigilGUI implements HudRenderCallback {
                 .getResourceManager()
                 .getResource(tex)
                 .isPresent();
-        if (!exists) return;
+        if (!exists) {
+            System.out.println("[DEBUG] Missing sigil icon texture: " + tex +
+                    " | Expected file: assets/" + tex.getNamespace() + "/textures/" + tex.getPath());
+            return;
+        }
 
         int insetX = x + BORDER;
         int insetY = y + BORDER;
         int insetSize = size - 2 * BORDER;
 
         RenderSystem.enableBlend();
-        ctx.drawTexture(tex, insetX, insetY, 0, 0, insetSize, insetSize, 32, 32);
+        ctx.drawTexture(tex, insetX, insetY, 0, 0, insetSize, insetSize, insetSize, insetSize);
         RenderSystem.disableBlend();
+
+        // Per-slot cooldown overlay
+        int cooldown = ClientSigilState.getCooldown(sigilType, slot);
+        int maxCooldown = ClientSigilState.getMaxCooldown(sigilType, slot);
+        if (cooldown > 0 && maxCooldown > 0) {
+            float progress = cooldown / (float) maxCooldown;
+            int overlayHeight = (int) (insetSize * progress);
+            ctx.fill(insetX, insetY + (insetSize - overlayHeight),
+                    insetX + insetSize, insetY + insetSize,
+                    0x88000000); // semi-transparent black
+        }
     }
 
     private static Identifier getIconIdentifier(String iconName) {

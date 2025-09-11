@@ -7,33 +7,33 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import occult.smp.OccultSmp;
-import occult.smp.Sigil.SigilItem;   // NOTE: lowercase package recommended
-import occult.smp.Sigil.SigilType;  // if you keep enum inside SigilItem, use SigilItem.SigilType
+import occult.smp.Sigil.SigilItem;
+import occult.smp.Sigil.SigilType;
 
 public class ModItems {
 
-    // Register each as a SigilItem tied to a SigilType
-    public static final Item LEAP_SIGIL    =
-            registerItem("leap_sigil",    new SigilItem(new Item.Settings(), SigilType.LEAP));
+    // Register each as a fireproof SigilItem tied to a SigilType
+    public static final Item LEAP_SIGIL =
+            registerItem("leap_sigil", new SigilItem(new Item.Settings().fireproof().maxCount(1), SigilType.LEAP));
     public static final Item EMERALD_SIGIL =
-            registerItem("emerald_sigil", new SigilItem(new Item.Settings(), SigilType.EMERALD));
-    public static final Item ICE_SIGIL     =
-            registerItem("ice_sigil",     new SigilItem(new Item.Settings(), SigilType.ICE));
-    public static final Item OCEAN_SIGIL   =
-            registerItem("ocean_sigil",   new SigilItem(new Item.Settings(), SigilType.OCEAN));
+            registerItem("emerald_sigil", new SigilItem(new Item.Settings().fireproof().maxCount(1), SigilType.EMERALD));
+    public static final Item ICE_SIGIL =
+            registerItem("ice_sigil", new SigilItem(new Item.Settings().fireproof().maxCount(1), SigilType.ICE));
+    public static final Item OCEAN_SIGIL =
+            registerItem("ocean_sigil", new SigilItem(new Item.Settings().fireproof().maxCount(1), SigilType.OCEAN));
 
     private static Item registerItem(String name, Item item) {
-        return Registry.register(Registries.ITEM, Identifier.of(OccultSmp.MOD_ID, name), item);
+        return Registry.register(Registries.ITEM, Identifier.of(OccultSmp.MOD_ID,name), item);
     }
 
     // Map SigilType -> Item for refunds
     public static Item fromType(SigilType type) {
         return switch (type) {
-            case LEAP    -> LEAP_SIGIL;
+            case LEAP -> LEAP_SIGIL;
             case EMERALD -> EMERALD_SIGIL;
-            case ICE     -> ICE_SIGIL;
-            case OCEAN   -> OCEAN_SIGIL;
-            case NONE    -> null;
+            case ICE -> ICE_SIGIL;
+            case OCEAN -> OCEAN_SIGIL;
+            case NONE -> null;
         };
     }
 
@@ -47,3 +47,4 @@ public class ModItems {
         });
     }
 }
+

@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
-import occult.smp.ClientSigilState;
+import occult.smp.Sigil.ClientSigilState;
 import occult.smp.Sigil.SigilType;
 
 public final class SigilSyncPackets {

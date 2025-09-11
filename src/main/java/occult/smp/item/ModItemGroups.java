@@ -12,7 +12,7 @@ import occult.smp.OccultSmp;
 public class ModItemGroups {
     public static final ItemGroup OCCULT_SMP_ITEMS_GROUP = Registry.register(Registries.ITEM_GROUP, Identifier.of(OccultSmp.MOD_ID, "occult_smp_items"),
             FabricItemGroup.builder().icon(() -> new ItemStack(ModItems.LEAP_SIGIL))
-                    .displayName(Text.translatable("itemgroup.occultsmp.occult_smp_items"))
+                    .displayName(Text.translatable("item-group.occultsmp.occult_smp_items"))
                     .entries((displayContext, entries) ->{
                         entries.add(ModItems.LEAP_SIGIL);
                         entries.add(ModItems.EMERALD_SIGIL);

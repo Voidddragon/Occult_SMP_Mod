@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "occult-smp:item/leap_sigil"
+    "layer0": "occult_smp:item/ocean_sigil"
   }
 }

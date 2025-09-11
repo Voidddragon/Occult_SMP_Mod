@@ -12,7 +12,7 @@
     "sources": "https://github.com/Voidddragon/Occult-Smp?tab=readme-ov-file"
   },
   "license": "CC0-1.0",
-  "icon": "assets/occult-smp/icon.png",
+  "icon": "assets/occult_smp/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [

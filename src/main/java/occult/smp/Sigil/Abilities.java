@@ -1,4 +1,7 @@
 package occult.smp.Sigil;
+
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import occult.smp.Sigil.AbilitySlot.Ability;
@@ -6,7 +9,7 @@ import occult.smp.Sigil.AbilitySlot.AbilityContext;
 import occult.smp.Sigil.AbilitySlot.AbilityRegistry;
 
 public final class Abilities {
-        private Abilities() {}
+    private Abilities() {}
 
     public static final Ability LEAP = new Ability() {
         @Override
@@ -30,16 +33,28 @@ public final class Abilities {
         }
     };
 
-
-
     public static void registerAll() {
-            // Map each sigil to two abilities (examples)
-            AbilityRegistry.set(SigilType.LEAP, LEAP,null);
-            AbilityRegistry.set(SigilType.ICE, null, null);
-            AbilityRegistry.set(SigilType.OCEAN, null, null);
-            AbilityRegistry.set(SigilType.EMERALD, null, null);
-            AbilityRegistry.set(SigilType.NONE, null, null);
-        }
+        AbilityRegistry.set(SigilType.LEAP, LEAP, null);
+        AbilityRegistry.set(SigilType.ICE, null, null);
+        AbilityRegistry.set(SigilType.OCEAN, null, null);
+        AbilityRegistry.set(SigilType.EMERALD, null, null);
+        AbilityRegistry.set(SigilType.NONE, null, null);
     }
 
+    // ✅ New method to apply effects based on active sigil
+    public static void applySigilEffect(ServerPlayerEntity player) {
+        SigilType sigil = Sigils.getActive(player);
+        StatusEffectInstance effect = SigilEffects.getEffect(sigil);
+
+        if (effect != null && !player.hasStatusEffect(effect.getEffectType())) {
+            player.addStatusEffect(new StatusEffectInstance(
+                    effect.getEffectType(),
+                    effect.getDuration(),
+                    effect.getAmplifier(),
+                    effect.isAmbient(),
+                    effect.shouldShowParticles()
+            ));
+        }
+    }
+}
 
