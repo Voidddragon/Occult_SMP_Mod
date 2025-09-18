@@ -2,6 +2,7 @@ package occult.smp.Sigil;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import occult.smp.Network.SigilSyncPackets;
+import occult.smp.Sigil.AbilitySlot.AbilitySlot;
 import occult.smp.SigilData;
 
 public final class Sigils {
@@ -19,7 +20,8 @@ public final class Sigils {
     public static void setActive(ServerPlayerEntity player, SigilType type) {
         ((SigilData) player).occult_smp$setEquippedSigil(type.name());
         SigilState.get(player.getWorld()).set(player.getUuid(), type);
-        SigilSyncPackets.sendTo(player, type);
+        SigilSyncPackets.sendSigilSync(player, type, AbilitySlot.PRIMARY,AbilitySlot.SECONDARY, 0);
+
     }
 
     public static void clearActive(ServerPlayerEntity player) {

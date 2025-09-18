@@ -3,6 +3,7 @@ package occult.smp.Network;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.network.ServerPlayerEntity;
+import occult.smp.Sigil.AbilitySlot.AbilitySlot;
 import occult.smp.Sigil.SigilType;
 import occult.smp.Sigil.Sigils;
 import occult.smp.Sigil.Abilities;
@@ -20,7 +21,8 @@ public class OccultServerEvents {
             ServerPlayerEntity player = handler.getPlayer();
 
             SigilType sigil = Sigils.getActive(player);
-            SigilSyncPackets.sendTo(player, sigil);
+            SigilSyncPackets.sendSigilSync(player, sigil, AbilitySlot.PRIMARY, AbilitySlot.SECONDARY,0);
+
 
             HudVisibility hud = ((HudVisibilityData) player).occult_smp$getHudVisibility();
             KeybindSettings keybinds = ((KeybindSettingsData) player).occult_smp$getKeybindSettings();

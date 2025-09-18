@@ -3,11 +3,8 @@ package occult.smp;
 import net.fabricmc.api.ModInitializer;
 
 
-import occult.smp.Network.AbilityPacketHandler;
+import occult.smp.Network.*;
 
-import occult.smp.Network.ModNetworking;
-import occult.smp.Network.OccultServerEvents;
-import occult.smp.Network.SettingsSyncPackets;
 import occult.smp.Sigil.Abilities;
 import occult.smp.Sigil.DeathHandler;
 
@@ -22,13 +19,13 @@ public class OccultSmp implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+        ModNetworking.registerPayloads();
+        ModNetworking.registerServerReceivers();
         ModItems.registerModItems();
         ModItemGroups.registerItemGroups();
         DeathHandler.register();
         Abilities.registerAll();
-        AbilityPacketHandler.register();
         OccultServerEvents.register();
-        ModNetworking.registerPayloads();
 
 
     }
