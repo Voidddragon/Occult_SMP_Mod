@@ -4,10 +4,8 @@ package occult.smp.Sigil;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
-import occult.smp.OccultSmp;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,24 +32,28 @@ public class SigilState extends PersistentState {
             .getOrCreate(
                 new Type<>(
                     SigilState::new,
-                    SigilState::fromNbt,
+                    SigilState::createFromNbt,
                     null
                 ),
-                OccultSmp.MOD_ID + "_sigils"
+                "occult_sigils"
             );
     }
 
-    public static SigilState fromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+    public static SigilState createFromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         SigilState state = new SigilState();
         
         NbtCompound primaryNbt = nbt.getCompound("PrimarySigils");
         for (String key : primaryNbt.getKeys()) {
-            state.primarySigils.put(UUID.fromString(key), SigilType.fromString(primaryNbt.getString(key)));
+            UUID uuid = UUID.fromString(key);
+            SigilType type = SigilType.fromString(primaryNbt.getString(key));
+            state.primarySigils.put(uuid, type);
         }
         
         NbtCompound secondaryNbt = nbt.getCompound("SecondarySigils");
         for (String key : secondaryNbt.getKeys()) {
-            state.secondarySigils.put(UUID.fromString(key), SigilType.fromString(secondaryNbt.getString(key)));
+            UUID uuid = UUID.fromString(key);
+            SigilType type = SigilType.fromString(secondaryNbt.getString(key));
+            state.secondarySigils.put(uuid, type);
         }
         
         NbtCompound primaryCooldownsNbt = nbt.getCompound("PrimaryCooldowns");
@@ -70,11 +72,15 @@ public class SigilState extends PersistentState {
     @Override
     public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         NbtCompound primaryNbt = new NbtCompound();
-        primarySigils.forEach((uuid, type) -> primaryNbt.putString(uuid.toString(), type.asString()));
+        primarySigils.forEach((uuid, type) -> 
+            primaryNbt.putString(uuid.toString(), type.name())
+        );
         nbt.put("PrimarySigils", primaryNbt);
         
         NbtCompound secondaryNbt = new NbtCompound();
-        secondarySigils.forEach((uuid, type) -> secondaryNbt.putString(uuid.toString(), type.asString()));
+        secondarySigils.forEach((uuid, type) -> 
+            secondaryNbt.putString(uuid.toString(), type.name())
+        );
         nbt.put("SecondarySigils", secondaryNbt);
         
         NbtCompound primaryCooldownsNbt = new NbtCompound();
@@ -88,22 +94,30 @@ public class SigilState extends PersistentState {
         return nbt;
     }
 
-    public void setPrimarySigil(ServerPlayerEntity player, SigilType type) {
-        primarySigils.put(player.getUuid(), type);
+    public SigilType getPrimarySigil(UUID playerUuid) {
+        return primarySigils.getOrDefault(playerUuid, SigilType.NONE);
+    }
+    
+    public void setPrimarySigil(UUID playerUuid, SigilType type) {
+        if (type == SigilType.NONE) {
+            primarySigils.remove(playerUuid);
+        } else {
+            primarySigils.put(playerUuid, type);
+        }
         markDirty();
     }
-
-    public SigilType getPrimarySigil(ServerPlayerEntity player) {
-        return primarySigils.getOrDefault(player.getUuid(), SigilType.NONE);
+    
+    public SigilType getSecondarySigil(UUID playerUuid) {
+        return secondarySigils.getOrDefault(playerUuid, SigilType.NONE);
     }
-
-    public void setSecondarySigil(ServerPlayerEntity player, SigilType type) {
-        secondarySigils.put(player.getUuid(), type);
+    
+    public void setSecondarySigil(UUID playerUuid, SigilType type) {
+        if (type == SigilType.NONE) {
+            secondarySigils.remove(playerUuid);
+        } else {
+            secondarySigils.put(playerUuid, type);
+        }
         markDirty();
-    }
-
-    public SigilType getSecondarySigil(ServerPlayerEntity player) {
-        return secondarySigils.getOrDefault(player.getUuid(), SigilType.NONE);
     }
 
     public void setPrimaryCooldown(UUID playerId, long cooldown) {

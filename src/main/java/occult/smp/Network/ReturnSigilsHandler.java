@@ -2,53 +2,49 @@
 package occult.smp.Network;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import occult.smp.Network.Payloads.ReturnSigilsPayload;
 import occult.smp.Sigil.SigilState;
 import occult.smp.Sigil.SigilType;
-import occult.smp.Sigil.Sigils;
-import occult.smp.Sigil.AbilitySlot.AbilityRegistry;
-import occult.smp.Sigil.AbilitySlot.AbilitySlot;
 import occult.smp.item.ModItems;
 
-import java.util.List;
-
-public class ReturnSigilsHandler {
-    public static void register() {
-        ServerPlayNetworking.registerGlobalReceiver(ReturnSigilsPayload.ID, (payload, context) -> {
-            context.server().execute(() -> {
-                ServerPlayerEntity player = context.player();
-                SigilState state = SigilState.get(player.getWorld());
-                
-                // Get all equipped sigils
-                List<SigilType> sigils = state.getSigils(player.getUuid());
-                
-                // Call onUnequip for all abilities
-                for (SigilType sigil : sigils) {
-                    var primary = AbilityRegistry.get(sigil, AbilitySlot.PRIMARY);
-                    var secondary = AbilityRegistry.get(sigil, AbilitySlot.SECONDARY);
-                    if (primary != null) primary.onUnequip(player);
-                    if (secondary != null) secondary.onUnequip(player);
+public class ReturnSigilsHandler implements ServerPlayNetworking.PlayPayloadHandler<ReturnSigilsPayload> {
+    @Override
+    public void receive(ReturnSigilsPayload payload, ServerPlayNetworking.Context context) {
+        ServerPlayerEntity player = context.player();
+        
+        context.server().execute(() -> {
+            SigilState state = SigilState.get(player.getWorld());
+            
+            // Get equipped sigils
+            SigilType primary = state.getPrimarySigil(player.getUuid());
+            SigilType secondary = state.getSecondarySigil(player.getUuid());
+            
+            // Return primary sigil
+            if (primary != SigilType.NONE) {
+                Item primaryItem = ModItems.fromType(primary);
+                if (primaryItem != null) {
+                    player.getInventory().insertStack(new ItemStack(primaryItem));
                 }
-                
-                // Return all sigils to inventory
-                for (SigilType sigil : sigils) {
-                    if (sigil != SigilType.NONE) {
-                        var item = ModItems.fromType(sigil);
-                        if (item != null) {
-                            ItemStack stack = new ItemStack(item);
-                            if (!player.getInventory().insertStack(stack)) {
-                                player.dropItem(stack, false);
-                            }
-                        }
-                    }
+            }
+            
+            // Return secondary sigil
+            if (secondary != SigilType.NONE) {
+                Item secondaryItem = ModItems.fromType(secondary);
+                if (secondaryItem != null) {
+                    player.getInventory().insertStack(new ItemStack(secondaryItem));
                 }
-                
-                // Clear all sigils
-                Sigils.clearActive(player);
-                
-                System.out.println("[Occult Debug] " + player.getName().getString() + " returned all sigils");
-            });
+            }
+            
+            // Clear equipped sigils
+            state.clearSigils(player.getUuid());
+            
+            // Sync to client
+            ModNetworking.syncSigilsToClient(player);
+            
+            System.out.println("[Occult Debug] Returned sigils to " + player.getName().getString());
         });
     }
 }

@@ -8,27 +8,53 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import occult.smp.Network.SigilSyncPackets;
+import occult.smp.Network.ModNetworking;
 
 public class SigilItem extends Item {
-    private final SigilType type;
-
-    public SigilItem(Settings settings, SigilType type) {
+    private final SigilType sigilType;
+    
+    public SigilItem(Settings settings, SigilType sigilType) {
         super(settings);
-        this.type = type;
+        this.sigilType = sigilType;
     }
-
+    
+    public SigilType getSigilType() {
+        return sigilType;
+    }
+    
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        if (!world.isClient && user instanceof ServerPlayerEntity serverPlayer) {
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        if (!world.isClient && player instanceof ServerPlayerEntity serverPlayer) {
+            ItemStack stack = player.getStackInHand(hand);
             SigilState state = SigilState.get(world);
-            state.setPrimarySigil(serverPlayer, type);
-            SigilSyncPackets.sendBothSigils(serverPlayer);
+            
+            SigilType currentPrimary = state.getPrimarySigil(player.getUuid());
+            SigilType currentSecondary = state.getSecondarySigil(player.getUuid());
+            
+            // If sneaking, equip to secondary slot
+            if (player.isSneaking()) {
+                if (currentSecondary == SigilType.NONE) {
+                    state.setSecondarySigil(player.getUuid(), sigilType);
+                    stack.decrement(1);
+                    ModNetworking.syncSigilsToClient(serverPlayer);
+                    System.out.println("[Occult Debug] Equipped " + sigilType + " to secondary slot");
+                    return TypedActionResult.success(stack);
+                }
+            } else {
+                // Normal use - equip to primary slot
+                if (currentPrimary == SigilType.NONE) {
+                    state.setPrimarySigil(player.getUuid(), sigilType);
+                    stack.decrement(1);
+                    ModNetworking.syncSigilsToClient(serverPlayer);
+                    System.out.println("[Occult Debug] Equipped " + sigilType + " to primary slot");
+                    return TypedActionResult.success(stack);
+                }
+            }
+            
+            // Both slots full
+            return TypedActionResult.fail(stack);
         }
-        return TypedActionResult.success(user.getStackInHand(hand), world.isClient());
-    }
-
-    public SigilType getType() {
-        return type;
+        
+        return TypedActionResult.success(player.getStackInHand(hand));
     }
 }

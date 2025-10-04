@@ -2,33 +2,26 @@
 package occult.smp.Sigil.AbilitySlot;
 
 import occult.smp.Sigil.SigilType;
+import occult.smp.Sigil.abilities.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class AbilityRegistry {
-    private static final Map<SigilType, Map<AbilitySlot, Ability>> ABILITIES = new HashMap<>();
+    private static final Map<SigilType, Ability> ABILITIES = new HashMap<>();
     
-    static {
-        // Initialize ability maps for each sigil type
-        for (SigilType type : SigilType.values()) {
-            ABILITIES.put(type, new HashMap<>());
+    public static void register(SigilType type, Ability ability) {
+        if (ABILITIES.containsKey(type)) {
+            throw new IllegalStateException("Ability already registered for sigil type: " + type);
         }
+        ABILITIES.put(type, ability);
     }
     
-    public static void register(SigilType sigilType, AbilitySlot slot, Ability ability) {
-        ABILITIES.get(sigilType).put(slot, ability);
+    public static Ability getAbility(SigilType type) {
+        return ABILITIES.get(type);
     }
     
-    public static Ability getAbility(SigilType sigilType, AbilitySlot slot) {
-        return ABILITIES.get(sigilType).get(slot);
-    }
-    
-    public static boolean hasAbility(SigilType sigilType, AbilitySlot slot) {
-        return ABILITIES.get(sigilType).containsKey(slot);
-    }
-    
-    public static void clear() {
-        ABILITIES.values().forEach(Map::clear);
+    public static boolean hasAbility(SigilType type) {
+        return ABILITIES.containsKey(type) && type != SigilType.NONE;
     }
 }
