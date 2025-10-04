@@ -1,0 +1,19 @@
+
+{
+  "key.categories.occult": "Occult SMP",
+  "key.occult_smp.use_first_sigil": "Use First Sigil Ability",
+  "key.occult_smp.use_second_sigil": "Use Second Sigil Ability",
+  "key.occult_smp.return_sigils": "Return Sigils",
+
+  "itemGroup.occult_smp": "Occult SMP",
+
+  "item.occult_smp.leap_sigil": "Leap Sigil",
+  "item.occult_smp.fire_sigil": "Fire Sigil",
+  "item.occult_smp.ice_sigil": "Ice Sigil",
+  "item.occult_smp.ocean_sigil": "Ocean Sigil",
+  "item.occult_smp.strength_sigil": "Strength Sigil",
+  "item.occult_smp.end_sigil": "End Sigil",
+  "item.occult_smp.haste_sigil": "Haste Sigil",
+  "item.occult_smp.emerald_sigil": "Emerald Sigil",
+  "item.occult_smp.dragon_sigil": "Dragon Sigil"
+}
