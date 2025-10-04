@@ -1,3 +1,4 @@
+
 package occult.smp.Sigil.Gui;
 
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
@@ -10,7 +11,7 @@ public class OccultHudConfigScreen {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
                 .setTitle(Text.of("Occult HUD Settings"))
-                .setSavingRunnable(OccultHudConfig::save); // Save when screen closes
+                .setSavingRunnable(OccultHudConfig::save);
 
         ConfigEntryBuilder eb = builder.entryBuilder();
 
@@ -27,12 +28,23 @@ public class OccultHudConfigScreen {
                         .build()
                 )
                 .addEntry(eb.startIntField(Text.of("Vertical Offset"), OccultHudConfig.hudOffsetY)
-                        .setDefaultValue(-80)
+                        .setDefaultValue(-50)
                         .setMin(-200)
                         .setMax(0)
-                        .setTooltip(Text.of("Move the HUD up or down on the screen"))
+                        .setTooltip(Text.of("Move the HUD up from the bottom (negative = higher)"))
                         .setSaveConsumer(newValue -> {
                             OccultHudConfig.hudOffsetY = newValue;
+                            OccultHudConfig.save();
+                        })
+                        .build()
+                )
+                .addEntry(eb.startIntField(Text.of("Horizontal Offset"), OccultHudConfig.hudOffsetX)
+                        .setDefaultValue(0)
+                        .setMin(-500)
+                        .setMax(500)
+                        .setTooltip(Text.of("Move the HUD left or right from center"))
+                        .setSaveConsumer(newValue -> {
+                            OccultHudConfig.hudOffsetX = newValue;
                             OccultHudConfig.save();
                         })
                         .build()

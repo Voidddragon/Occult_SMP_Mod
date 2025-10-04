@@ -1,31 +1,66 @@
+
 package occult.smp.Sigil;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import occult.smp.Network.SigilSyncPackets;
-import occult.smp.Sigil.AbilitySlot.AbilitySlot;
-import occult.smp.SigilData;
 
 public final class Sigils {
-    private static final String NBT_KEY = "occult_sigil";
-
-    private Sigils() {}
-
-    public static SigilType getActive(ServerPlayerEntity player) {
-        String stored = ((SigilData) player).occult_smp$getEquippedSigil();
-        SigilType sigil = SigilType.fromName(stored);
-        SigilState.get(player.getWorld()).set(player.getUuid(), sigil);
-        return sigil;
+    
+    /**
+     * Adds a sigil to a player
+     */
+    public static boolean add(ServerPlayerEntity player, SigilType type) {
+        SigilState state = SigilState.get(player.getWorld());
+        SigilType removed = state.addSigil(player.getUuid(), type);
+        boolean added = (removed != null); // If it returns non-null, something happened
+        if (added || removed != SigilType.NONE) {
+            SigilSyncPackets.sendBothSigils(player);
+        }
+        return added;
     }
 
-    public static void setActive(ServerPlayerEntity player, SigilType type) {
-        ((SigilData) player).occult_smp$setEquippedSigil(type.name());
-        SigilState.get(player.getWorld()).set(player.getUuid(), type);
-        SigilSyncPackets.sendSigilSync(player, type, AbilitySlot.PRIMARY,AbilitySlot.SECONDARY, 0);
-
+    /**
+     * Removes a specific sigil
+     */
+    public static boolean remove(ServerPlayerEntity player, SigilType type) {
+        SigilState state = SigilState.get(player.getWorld());
+        boolean removed = state.removeSigil(player.getUuid(), type);
+        if (removed) {
+            SigilSyncPackets.sendBothSigils(player);
+        }
+        return removed;
     }
 
+    /**
+     * Clears all sigils
+     */
     public static void clearActive(ServerPlayerEntity player) {
-        ((SigilData) player).occult_smp$setEquippedSigil("NONE");
-        SigilState.get(player.getWorld()).clear(player.getUuid());
+        SigilState state = SigilState.get(player.getWorld());
+        state.clearAll(player.getUuid());
+        SigilSyncPackets.sendBothSigils(player);
+    }
+    
+    /**
+     * Gets the primary sigil for a player
+     */
+    public static SigilType getPrimary(ServerPlayerEntity player) {
+        SigilState state = SigilState.get(player.getWorld());
+        return state.getPrimarySigil(player.getUuid());
+    }
+    
+    /**
+     * Gets the secondary sigil for a player
+     */
+    public static SigilType getSecondary(ServerPlayerEntity player) {
+        SigilState state = SigilState.get(player.getWorld());
+        return state.getSecondarySigil(player.getUuid());
+    }
+    
+    /**
+     * Checks if a player has a specific sigil
+     */
+    public static boolean has(ServerPlayerEntity player, SigilType type) {
+        SigilState state = SigilState.get(player.getWorld());
+        return state.hasSigil(player.getUuid(), type);
     }
 }

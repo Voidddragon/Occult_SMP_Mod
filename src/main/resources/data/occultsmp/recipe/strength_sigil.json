@@ -1,0 +1,27 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#NW",
+        "NZN",
+        "WNP"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:rib_armor_trim_smithing_template"
+        },
+        "N": {
+            "item": "minecraft:netherite_sword"
+        },
+        "W": {
+            "item": "minecraft:wither_skeleton_skull"
+        },
+        "Z": {
+            "item": "minecraft:netherite_axe"
+        },
+        "P": {
+            "item": "minecraft:piglin_banner_pattern"
+        }
+    },
+    "result": {"id": "occult_smp:strength_sigil",
+      "count": 1}
+}

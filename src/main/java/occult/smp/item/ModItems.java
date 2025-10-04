@@ -22,6 +22,18 @@ public class ModItems {
     public static final Item OCEAN_SIGIL =
             registerItem("ocean_sigil", new SigilItem(new Item.Settings().fireproof().maxCount(1), SigilType.OCEAN));
 
+    // Newly added sigil items (like other non-leap sigils)
+    public static final Item STRENGTH_SIGIL =
+            registerItem("strength_sigil", new SigilItem(new Item.Settings().fireproof().maxCount(1), SigilType.STRENGTH));
+    public static final Item FIRE_SIGIL =
+            registerItem("fire_sigil", new SigilItem(new Item.Settings().fireproof().maxCount(1), SigilType.FIRE));
+    public static final Item HASTE_SIGIL =
+            registerItem("haste_sigil", new SigilItem(new Item.Settings().fireproof().maxCount(1), SigilType.HASTE));
+    public static final Item END_SIGIL =
+            registerItem("end_sigil", new SigilItem(new Item.Settings().fireproof().maxCount(1), SigilType.END));
+    public static final Item DRAGON_SIGIL =
+            registerItem("dragon_sigil", new SigilItem(new Item.Settings().fireproof().maxCount(1), SigilType.DRAGON));
+
     private static Item registerItem(String name, Item item) {
         return Registry.register(Registries.ITEM, Identifier.of(OccultSmp.MOD_ID,name), item);
     }
@@ -33,6 +45,11 @@ public class ModItems {
             case EMERALD -> EMERALD_SIGIL;
             case ICE -> ICE_SIGIL;
             case OCEAN -> OCEAN_SIGIL;
+            case STRENGTH -> STRENGTH_SIGIL;
+            case FIRE -> FIRE_SIGIL;
+            case HASTE -> HASTE_SIGIL;
+            case END -> END_SIGIL;
+            case DRAGON -> DRAGON_SIGIL;
             case NONE -> null;
         };
     }
@@ -44,7 +61,11 @@ public class ModItems {
             entries.add(EMERALD_SIGIL);
             entries.add(ICE_SIGIL);
             entries.add(OCEAN_SIGIL);
+            entries.add(STRENGTH_SIGIL);
+            entries.add(FIRE_SIGIL);
+            entries.add(HASTE_SIGIL);
+            entries.add(END_SIGIL);
+            entries.add(DRAGON_SIGIL);
         });
     }
 }
-

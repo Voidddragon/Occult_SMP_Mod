@@ -1,12 +1,16 @@
 {
   "required": true,
+  "minVersion": "0.8",
   "package": "occult.smp.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ServerPlayerEntityConfigMixin",
+    "ServerPlayNetworkHandlerMixin",
     "ServerPlayerEntityHudMixin",
     "ServerPlayerEntityKeybindMixin",
     "ServerPlayerEntityMixin"
   ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   },

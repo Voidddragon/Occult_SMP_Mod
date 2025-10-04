@@ -1,10 +1,15 @@
 package occult.smp.Sigil;
 
 public enum SigilType {
-   LEAP,
+    LEAP,
     ICE,
     OCEAN,
     EMERALD,
+    STRENGTH,
+    FIRE,
+    HASTE,
+    END,
+    DRAGON,
     NONE;
 
     public static SigilType fromName(String name) {

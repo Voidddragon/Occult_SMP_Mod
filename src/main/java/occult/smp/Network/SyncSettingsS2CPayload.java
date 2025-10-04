@@ -10,7 +10,7 @@ import occult.smp.KeybindSettings;
 
 public record SyncSettingsS2CPayload(HudVisibility hud, KeybindSettings keybinds) implements CustomPayload {
     public static final Id<SyncSettingsS2CPayload> ID =
-            new Id<>(Identifier.of("occult-smp", "sync_settings"));
+            new Id<>(Identifier.of("occult_smp", "sync_settings"));
 
     public static final PacketCodec<RegistryByteBuf, SyncSettingsS2CPayload> CODEC =
             PacketCodec.tuple(

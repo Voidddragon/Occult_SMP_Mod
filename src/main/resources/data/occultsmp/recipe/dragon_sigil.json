@@ -1,0 +1,29 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#N#",
+        "RDR",
+        "#S#"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:dragon_head"
+        },
+        "N": {
+            "item": "minecraft:netherite_block"
+        },
+        "R": {
+            "item": "minecraft:netherite_chestplate"
+        },
+        "D": {
+            "item": "minecraft:dragon_egg"
+        },
+        "S": {
+            "item": "minecraft:silence_armor_trim_smithing_template"
+        }
+    },
+    "result": {
+      "id": "occult_smp:dragon_sigil",
+      "count": 1
+    }
+}

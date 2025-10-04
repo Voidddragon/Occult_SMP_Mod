@@ -1,99 +1,109 @@
+
 package occult.smp.Sigil.Gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.Identifier;
-import occult.smp.Sigil.AbilitySlot.Ability;
-import occult.smp.Sigil.AbilitySlot.AbilityRegistry;
-import occult.smp.Sigil.AbilitySlot.AbilitySlot;
+import occult.smp.ClientHudState;
+import occult.smp.OccultSmp;
 import occult.smp.Sigil.SigilType;
-import occult.smp.Sigil.ClientSigilState;
 
+public class SigilGUI implements HudRenderCallback {
+    private static final int SIGIL_SIZE = 32;
+    private static final int SPACING = 4;
+    
+    // Texture identifiers for each sigil
+    private static final Identifier LEAP_TEXTURE = Identifier.of(OccultSmp.MOD_ID, "textures/item/leap_sigil.png");
+    private static final Identifier EMERALD_TEXTURE = Identifier.of(OccultSmp.MOD_ID, "textures/item/emerald_sigil.png");
+    private static final Identifier ICE_TEXTURE = Identifier.of(OccultSmp.MOD_ID, "textures/item/ice_sigil.png");
+    private static final Identifier OCEAN_TEXTURE = Identifier.of(OccultSmp.MOD_ID, "textures/item/ocean_sigil.png");
+    private static final Identifier STRENGTH_TEXTURE = Identifier.of(OccultSmp.MOD_ID, "textures/item/strength_sigil.png");
+    private static final Identifier FIRE_TEXTURE = Identifier.of(OccultSmp.MOD_ID, "textures/item/fire_sigil.png");
+    private static final Identifier HASTE_TEXTURE = Identifier.of(OccultSmp.MOD_ID, "textures/item/haste_sigil.png");
+    private static final Identifier END_TEXTURE = Identifier.of(OccultSmp.MOD_ID, "textures/item/end_sigil.png");
+    private static final Identifier DRAGON_TEXTURE = Identifier.of(OccultSmp.MOD_ID, "textures/item/dragon_sigil.png");
 
-public final class SigilGUI implements HudRenderCallback {
-
-    private static final int BASE_SLOT_SIZE = 40;
-    private static final int PADDING = 6;
-    private static final int BORDER = 2;
-    private static final int BORDER_COLOR = 0xFF000000;
-    private static final String ICON_PATH_FORMAT = "textures/gui/%s.png";
-    private static final String MOD_ID = "occult_smp";
-
-    public static void register() {
+    public static void registerHudOverlay() {
         HudRenderCallback.EVENT.register(new SigilGUI());
+        System.out.println("[Occult Debug] SigilGUI registered");
+        
+        // Load HUD config
+        OccultHudConfig.load();
     }
 
     @Override
-    public void onHudRender(DrawContext ctx, RenderTickCounter tickCounter) {
-        MinecraftClient mc = MinecraftClient.getInstance();
-        if (mc.options.hudHidden || mc.player == null || mc.world == null) return;
-
-        SigilType sigil = ClientSigilState.getActive();
-        if (sigil == null) sigil = SigilType.NONE;
-
-        Ability primary = AbilityRegistry.get(sigil, AbilitySlot.PRIMARY);
-        Ability secondary = AbilityRegistry.get(sigil, AbilitySlot.SECONDARY);
-
-        int scaledSize = (int) (BASE_SLOT_SIZE * OccultHudConfig.hudScale);
-        int totalWidth = scaledSize * 2 + PADDING;
-        int sw = ctx.getScaledWindowWidth();
-        int sh = ctx.getScaledWindowHeight();
-        int x = (sw - totalWidth) / 2;
-        int y = sh + OccultHudConfig.hudOffsetY;
-
-        drawSlot(ctx, x, y, primary != null ? primary.icon() : null, scaledSize, sigil, AbilitySlot.PRIMARY);
-        x += scaledSize + PADDING;
-        drawSlot(ctx, x, y, secondary != null ? secondary.icon() : null, scaledSize, sigil, AbilitySlot.SECONDARY);
-    }
-
-    private void drawSlot(DrawContext ctx, int x, int y, String iconName, int size, SigilType sigilType, AbilitySlot slot) {
-        fillBorder2px(ctx, x, y, size, size, BORDER_COLOR);
-
-        if (iconName == null || iconName.isEmpty()) return;
-
-        Identifier tex = getIconIdentifier(iconName);
-        boolean exists = MinecraftClient.getInstance()
-                .getResourceManager()
-                .getResource(tex)
-                .isPresent();
-        if (!exists) {
-            System.out.println("[DEBUG] Missing sigil icon texture: " + tex +
-                    " | Expected file: assets/" + tex.getNamespace() + "/textures/" + tex.getPath());
+    public void onHudRender(DrawContext drawContext, RenderTickCounter tickCounter) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.player == null || client.options.hudHidden) {
             return;
         }
 
-        int insetX = x + BORDER;
-        int insetY = y + BORDER;
-        int insetSize = size - 2 * BORDER;
+        SigilType primary = ClientHudState.getPrimarySigil();
+        SigilType secondary = ClientHudState.getSecondarySigil();
 
-        RenderSystem.enableBlend();
-        ctx.drawTexture(tex, insetX, insetY, 0, 0, insetSize, insetSize, insetSize, insetSize);
-        RenderSystem.disableBlend();
+        // Debug: Log what we're trying to render (less frequently to avoid spam)
+        if (client.world != null && client.world.getTime() % 100 == 0) { // Log every 5 seconds
+            System.out.println("[SigilGUI Debug] Rendering - Primary: " + primary + ", Secondary: " + secondary);
+        }
 
-        // Per-slot cooldown overlay
-        int cooldown = ClientSigilState.getCooldown(sigilType, slot);
-        int maxCooldown = ClientSigilState.getMaxCooldown(sigilType, slot);
-        if (cooldown > 0 && maxCooldown > 0) {
-            float progress = cooldown / (float) maxCooldown;
-            int overlayHeight = (int) (insetSize * progress);
-            ctx.fill(insetX, insetY + (insetSize - overlayHeight),
-                    insetX + insetSize, insetY + insetSize,
-                    0x88000000); // semi-transparent black
+        // Apply HUD config scale and offset
+        float scale = OccultHudConfig.hudScale;
+        int offsetY = OccultHudConfig.hudOffsetY;
+        int offsetX = OccultHudConfig.hudOffsetX;
+        
+        drawContext.getMatrices().push();
+        drawContext.getMatrices().scale(scale, scale, 1.0f);
+        
+        // Get screen dimensions
+        int screenWidth = client.getWindow().getScaledWidth();
+        int screenHeight = client.getWindow().getScaledHeight();
+        
+        // Calculate total width of both sigils
+        int totalWidth = (SIGIL_SIZE * 2) + SPACING;
+        
+        // Position at bottom center of screen
+        // X: Center horizontally, adjusted for scale
+        int x = (int)(((screenWidth / 2) - (totalWidth / 2) + offsetX) / scale);
+        // Y: Position from bottom, adjusted for scale
+        int y = (int)((screenHeight - SIGIL_SIZE + offsetY) / scale);
+
+        // Render secondary sigil (left slot)
+        if (secondary != SigilType.NONE) {
+            renderSigilSlot(drawContext, x, y, secondary);
+        }
+
+        // Render primary sigil (right slot)
+        if (primary != SigilType.NONE) {
+            renderSigilSlot(drawContext, x + SIGIL_SIZE + SPACING, y, primary);
+        }
+        
+        drawContext.getMatrices().pop();
+    }
+
+    private void renderSigilSlot(DrawContext context, int x, int y, SigilType sigil) {
+        // Get the texture for this sigil
+        Identifier texture = getSigilTexture(sigil);
+        
+        if (texture != null) {
+            // Draw the sigil texture
+            context.drawTexture(texture, x, y, 0, 0, SIGIL_SIZE, SIGIL_SIZE, SIGIL_SIZE, SIGIL_SIZE);
         }
     }
 
-    private static Identifier getIconIdentifier(String iconName) {
-        return Identifier.of(MOD_ID, String.format(ICON_PATH_FORMAT, iconName));
-    }
-
-    private static void fillBorder2px(DrawContext ctx, int x, int y, int w, int h, int color) {
-        int b = BORDER;
-        ctx.fill(x, y, x + w, y + b, color);
-        ctx.fill(x, y + h - b, x + w, y + h, color);
-        ctx.fill(x, y + b, x + b, y + h - b, color);
-        ctx.fill(x + w - b, y + b, x + w, y + h - b, color);
+    private Identifier getSigilTexture(SigilType sigil) {
+        return switch (sigil) {
+            case LEAP -> LEAP_TEXTURE;
+            case EMERALD -> EMERALD_TEXTURE;
+            case ICE -> ICE_TEXTURE;
+            case OCEAN -> OCEAN_TEXTURE;
+            case STRENGTH -> STRENGTH_TEXTURE;
+            case FIRE -> FIRE_TEXTURE;
+            case HASTE -> HASTE_TEXTURE;
+            case END -> END_TEXTURE;
+            case DRAGON -> DRAGON_TEXTURE;
+            default -> null;
+        };
     }
 }

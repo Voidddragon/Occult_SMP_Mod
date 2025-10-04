@@ -10,7 +10,7 @@ import occult.smp.Sigil.AbilitySlot.AbilitySlot;
 
 public record SyncSigilS2CPayload(SigilType sigil, AbilitySlot slot, int ticks) implements CustomPayload {
     public static final Id<SyncSigilS2CPayload> ID =
-            new Id<>(Identifier.of("occult-smp", "sync_sigil"));
+            new Id<>(Identifier.of("occult_smp", "sync_sigil"));
 
     public static final PacketCodec<RegistryByteBuf, SyncSigilS2CPayload> CODEC =
             PacketCodec.tuple(

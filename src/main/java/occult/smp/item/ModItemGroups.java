@@ -18,6 +18,11 @@ public class ModItemGroups {
                         entries.add(ModItems.EMERALD_SIGIL);
                         entries.add(ModItems.ICE_SIGIL);
                         entries.add(ModItems.OCEAN_SIGIL);
+                        entries.add(ModItems.STRENGTH_SIGIL);
+                        entries.add(ModItems.FIRE_SIGIL);
+                        entries.add(ModItems.HASTE_SIGIL);
+                        entries.add(ModItems.END_SIGIL);
+                        entries.add(ModItems.DRAGON_SIGIL);
                     } )
                     .build());
 

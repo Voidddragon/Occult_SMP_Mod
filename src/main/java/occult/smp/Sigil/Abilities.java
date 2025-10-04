@@ -1,3 +1,4 @@
+
 package occult.smp.Sigil;
 
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -38,14 +39,30 @@ public final class Abilities {
         AbilityRegistry.set(SigilType.ICE, null, null);
         AbilityRegistry.set(SigilType.OCEAN, null, null);
         AbilityRegistry.set(SigilType.EMERALD, null, null);
+        AbilityRegistry.set(SigilType.STRENGTH, null, null);
+        AbilityRegistry.set(SigilType.FIRE, null, null);
+        AbilityRegistry.set(SigilType.HASTE, null, null);
+        AbilityRegistry.set(SigilType.END, null, null);
+        AbilityRegistry.set(SigilType.DRAGON, null, null);
         AbilityRegistry.set(SigilType.NONE, null, null);
     }
 
     // ✅ New method to apply effects based on active sigil
     public static void applySigilEffect(ServerPlayerEntity player) {
-        SigilType sigil = Sigils.getActive(player);
+        SigilState state = SigilState.get(player.getWorld());
+        
+        // Apply effects for both equipped sigils
+        SigilType primary = state.getPrimarySigil(player.getUuid());
+        SigilType secondary = state.getSecondarySigil(player.getUuid());
+        
+        applyEffect(player, primary);
+        applyEffect(player, secondary);
+    }
+    
+    private static void applyEffect(ServerPlayerEntity player, SigilType sigil) {
+        if (sigil == SigilType.NONE) return;
+        
         StatusEffectInstance effect = SigilEffects.getEffect(sigil);
-
         if (effect != null && !player.hasStatusEffect(effect.getEffectType())) {
             player.addStatusEffect(new StatusEffectInstance(
                     effect.getEffectType(),
@@ -57,4 +74,3 @@ public final class Abilities {
         }
     }
 }
-

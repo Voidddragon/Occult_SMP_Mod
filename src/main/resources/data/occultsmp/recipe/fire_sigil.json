@@ -1,0 +1,30 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#M#",
+        "S/S",
+        "FXF"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:netherite_chestplate"
+        },
+        "M": {
+            "item": "minecraft:magma_cream"
+        },
+        "S": {
+            "item": "minecraft:soul_campfire"
+        },
+        "/": {
+            "item": "minecraft:blaze_rod"
+        },
+        "F": {
+            "item": "minecraft:flint_and_steel"
+        },
+        "X": {
+            "item": "minecraft:soul_soil"
+        }
+    },
+    "result": {"id": "occult_smp:fire_sigil",
+      "count": 1}
+}
