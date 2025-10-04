@@ -2,10 +2,9 @@
 package occult.smp.Network.Handler;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
-import occult.smp.ClientHudState;
 import occult.smp.Network.Payload.SigilSyncPayload;
 import occult.smp.Sigil.SigilType;
+import occult.smp.client.ClientSigilState;
 
 public class SigilSyncHandler implements ClientPlayNetworking.PlayPayloadHandler<SigilSyncPayload> {
     
@@ -15,8 +14,8 @@ public class SigilSyncHandler implements ClientPlayNetworking.PlayPayloadHandler
             SigilType primary = SigilType.fromString(payload.primarySigil());
             SigilType secondary = SigilType.fromString(payload.secondarySigil());
             
-            ClientHudState.setPrimarySigil(primary);
-            ClientHudState.setSecondarySigil(secondary);
+            ClientSigilState.setPrimarySigil(primary);
+            ClientSigilState.setSecondarySigil(secondary);
         });
     }
 }

@@ -6,40 +6,40 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import occult.smp.Network.Payload.CooldownSyncPayload;
 import occult.smp.Network.Payload.SigilSyncPayload;
 import occult.smp.Sigil.SigilState;
-import occult.smp.Sigil.SigilType;
 
 public class SigilSyncPackets {
     
-    public static void sendBothSigils(ServerPlayerEntity player) {
+    public static void sendSigils(ServerPlayerEntity player) {
         SigilState state = SigilState.get(player.getWorld());
         
-        SigilType primary = state.getPrimarySigil(player);
-        SigilType secondary = state.getSecondarySigil(player);
-        
         SigilSyncPayload payload = new SigilSyncPayload(
-            primary.asString(),
-            secondary.asString()
+            state.getPrimarySigil(player).asString(),
+            state.getSecondarySigil(player).asString()
         );
         
         ServerPlayNetworking.send(player, payload);
     }
     
-    public static void sendCooldowns(ServerPlayerEntity player) {
-        SigilState state = SigilState.get(player.getWorld());
-        
-        long primaryCooldown = state.getPrimaryCooldown(player.getUuid());
-        long secondaryCooldown = state.getSecondaryCooldown(player.getUuid());
-        
-        CooldownSyncPayload payload = new CooldownSyncPayload(
-            primaryCooldown,
-            secondaryCooldown
-        );
-        
+    public static void sendCooldown(ServerPlayerEntity player, String abilityKey, long cooldown, long maxCooldown) {
+        CooldownSyncPayload payload = new CooldownSyncPayload(abilityKey, cooldown, maxCooldown);
         ServerPlayNetworking.send(player, payload);
     }
     
     public static void syncAll(ServerPlayerEntity player) {
-        sendBothSigils(player);
-        sendCooldowns(player);
+        sendSigils(player);
+        
+        SigilState state = SigilState.get(player.getWorld());
+        long currentTime = System.currentTimeMillis();
+        
+        long primaryCooldown = Math.max(0, state.getPrimaryCooldown(player.getUuid()) - currentTime);
+        long secondaryCooldown = Math.max(0, state.getSecondaryCooldown(player.getUuid()) - currentTime);
+        
+        if (primaryCooldown > 0) {
+            sendCooldown(player, "primary", primaryCooldown, primaryCooldown);
+        }
+        
+        if (secondaryCooldown > 0) {
+            sendCooldown(player, "secondary", secondaryCooldown, secondaryCooldown);
+        }
     }
 }

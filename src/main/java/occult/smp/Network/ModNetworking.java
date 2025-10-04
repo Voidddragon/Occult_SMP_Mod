@@ -5,7 +5,12 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
-import occult.smp.Network.Payload.*;
+import occult.smp.Network.Handler.AbilityActivateHandler;
+import occult.smp.Network.Handler.CooldownSyncHandler;
+import occult.smp.Network.Handler.SigilSyncHandler;
+import occult.smp.Network.Payload.AbilityActivatePayload;
+import occult.smp.Network.Payload.CooldownSyncPayload;
+import occult.smp.Network.Payload.SigilSyncPayload;
 import occult.smp.Sigil.SigilState;
 import occult.smp.Sigil.SigilType;
 import occult.smp.config.GuiConfig;
@@ -39,24 +44,15 @@ public class ModNetworking {
         
         // Register C2S payloads
         PayloadTypeRegistry.playC2S().register(
-            SigilActivatePayload.ID, 
-            SigilActivatePayload.CODEC
-        );
-        PayloadTypeRegistry.playC2S().register(
-            HudConfigPayload.ID, 
-            HudConfigPayload.CODEC
+            AbilityActivatePayload.ID, 
+            AbilityActivatePayload.CODEC
         );
     }
 
     public static void registerServerReceivers() {
         ServerPlayNetworking.registerGlobalReceiver(
-            SigilActivatePayload.ID,
-            new SigilActivateHandler()
-        );
-        
-        ServerPlayNetworking.registerGlobalReceiver(
-            HudConfigPayload.ID,
-            new HudConfigHandler()
+            AbilityActivatePayload.ID,
+            new AbilityActivateHandler()
         );
     }
 

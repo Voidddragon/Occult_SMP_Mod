@@ -9,8 +9,9 @@ import net.minecraft.util.Identifier;
 import occult.smp.OccultSmp;
 
 public record CooldownSyncPayload(
-    long primaryCooldown,
-    long secondaryCooldown
+    String abilityKey,
+    long cooldown,
+    long maxCooldown
 ) implements CustomPayload {
     
     public static final CustomPayload.Id<CooldownSyncPayload> ID = 
@@ -18,8 +19,9 @@ public record CooldownSyncPayload(
     
     public static final PacketCodec<RegistryByteBuf, CooldownSyncPayload> CODEC = 
         PacketCodec.tuple(
-            PacketCodecs.VAR_LONG, CooldownSyncPayload::primaryCooldown,
-            PacketCodecs.VAR_LONG, CooldownSyncPayload::secondaryCooldown,
+            PacketCodecs.STRING, CooldownSyncPayload::abilityKey,
+            PacketCodecs.VAR_LONG, CooldownSyncPayload::cooldown,
+            PacketCodecs.VAR_LONG, CooldownSyncPayload::maxCooldown,
             CooldownSyncPayload::new
         );
 
