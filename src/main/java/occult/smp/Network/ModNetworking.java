@@ -5,32 +5,18 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
-import occult.smp.Network.Handler.AbilityActivateHandler;
-import occult.smp.Network.Handler.CooldownSyncHandler;
-import occult.smp.Network.Handler.SigilSyncHandler;
-import occult.smp.Network.Payload.AbilityActivatePayload;
-import occult.smp.Network.Payload.CooldownSyncPayload;
-import occult.smp.Network.Payload.SigilSyncPayload;
+import occult.smp.Network.Payloads.*;
 import occult.smp.Sigil.SigilState;
 import occult.smp.Sigil.SigilType;
 import occult.smp.config.GuiConfig;
 import occult.smp.config.KeybindConfig;
-import occult.smp.config.PlayerConfigData;
+import occult.smp.util.PlayerConfigData;
 
 public class ModNetworking {
     
     /**
-     * Register all payloads first, then register handlers
+     * Register all payload types (call this from both client and server)
      */
-    public static void registerReceivers() {
-        // First, register all payload types
-        registerPayloads();
-        
-        // Then, register all handlers
-        registerServerReceivers();
-        registerClientReceivers();
-    }
-    
     public static void registerPayloads() {
         // Register S2C payloads
         PayloadTypeRegistry.playS2C().register(
@@ -41,21 +27,48 @@ public class ModNetworking {
             CooldownSyncPayload.ID, 
             CooldownSyncPayload.CODEC
         );
+        PayloadTypeRegistry.playS2C().register(
+            SyncBothSigilsPayload.ID,
+            SyncBothSigilsPayload.CODEC
+        );
+        PayloadTypeRegistry.playS2C().register(
+            SyncKeybindConfigPayload.ID,
+            SyncKeybindConfigPayload.CODEC
+        );
+        PayloadTypeRegistry.playS2C().register(
+            SyncGuiConfigPayload.ID,
+            SyncGuiConfigPayload.CODEC
+        );
         
         // Register C2S payloads
         PayloadTypeRegistry.playC2S().register(
             AbilityActivatePayload.ID, 
             AbilityActivatePayload.CODEC
         );
+        PayloadTypeRegistry.playC2S().register(
+            ReturnSigilsPayload.ID,
+            ReturnSigilsPayload.CODEC
+        );
     }
 
+    /**
+     * Register server-side packet receivers (call this from server initialization)
+     */
     public static void registerServerReceivers() {
         ServerPlayNetworking.registerGlobalReceiver(
             AbilityActivatePayload.ID,
             new AbilityActivateHandler()
         );
+        
+        ServerPlayNetworking.registerGlobalReceiver(
+            ReturnSigilsPayload.ID,
+            new ReturnSigilsHandler()
+        );
     }
 
+    /**
+     * Register client-side packet receivers (call this from client initialization)
+     */
     public static void registerClientReceivers() {
         ClientPlayNetworking.registerGlobalReceiver(
             SigilSyncPayload.ID,
@@ -66,10 +79,21 @@ public class ModNetworking {
             CooldownSyncPayload.ID,
             new CooldownSyncHandler()
         );
-    }
-    
-    public static void registerClientHandlers() {
-        // Empty as handlers are registered in registerClientReceivers
+        
+        ClientPlayNetworking.registerGlobalReceiver(
+            SyncBothSigilsPayload.ID,
+            new SyncBothSigilsHandler()
+        );
+        
+        ClientPlayNetworking.registerGlobalReceiver(
+            SyncKeybindConfigPayload.ID,
+            new SyncKeybindConfigHandler()
+        );
+        
+        ClientPlayNetworking.registerGlobalReceiver(
+            SyncGuiConfigPayload.ID,
+            new SyncGuiConfigHandler()
+        );
     }
     
     /**
@@ -84,7 +108,9 @@ public class ModNetworking {
         System.out.println("[Occult Debug] Sent sigil sync packet - Primary: " + primary + ", Secondary: " + secondary);
     }
     
-    // Helper method to sync configs when player joins
+    /**
+     * Sync configs and sigils when player joins
+     */
     public static void syncConfigsToPlayer(ServerPlayerEntity player) {
         PlayerConfigData configData = (PlayerConfigData) player;
         
@@ -102,7 +128,7 @@ public class ModNetworking {
             guiConfig.getYPosition()
         ));
         
-        // ⭐ Also sync sigils when player joins
+        // Sync sigils when player joins
         syncSigilsToClient(player);
     }
 }
