@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import occult.smp.Network.Payloads.ReturnSigilsPayload;
+import occult.smp.Network.Payload.ReturnSigilsPayload;
 import occult.smp.Sigil.SigilState;
 import occult.smp.Sigil.SigilType;
 import occult.smp.item.ModItems;
@@ -38,13 +38,11 @@ public class ReturnSigilsHandler implements ServerPlayNetworking.PlayPayloadHand
                 }
             }
             
-            // Clear equipped sigils
+            // Clear both slots
             state.clearSigils(player.getUuid());
             
             // Sync to client
-            ModNetworking.syncSigilsToClient(player);
-            
-            System.out.println("[Occult Debug] Returned sigils to " + player.getName().getString());
+            SigilSyncPackets.syncToClient(player);
         });
     }
 }

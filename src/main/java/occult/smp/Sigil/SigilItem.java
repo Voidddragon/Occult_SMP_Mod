@@ -8,7 +8,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import occult.smp.Network.ModNetworking;
 
 public class SigilItem extends Item {
     private final SigilType sigilType;
@@ -31,22 +30,20 @@ public class SigilItem extends Item {
             SigilType currentPrimary = state.getPrimarySigil(player.getUuid());
             SigilType currentSecondary = state.getSecondarySigil(player.getUuid());
             
-            // If sneaking, equip to secondary slot
+            // Shift + Right Click = Secondary Slot
             if (player.isSneaking()) {
                 if (currentSecondary == SigilType.NONE) {
                     state.setSecondarySigil(player.getUuid(), sigilType);
                     stack.decrement(1);
-                    ModNetworking.syncSigilsToClient(serverPlayer);
-                    System.out.println("[Occult Debug] Equipped " + sigilType + " to secondary slot");
+                    SigilSyncPackets.syncToClient(serverPlayer);
                     return TypedActionResult.success(stack);
                 }
             } else {
-                // Normal use - equip to primary slot
+                // Normal Right Click = Primary Slot
                 if (currentPrimary == SigilType.NONE) {
                     state.setPrimarySigil(player.getUuid(), sigilType);
                     stack.decrement(1);
-                    ModNetworking.syncSigilsToClient(serverPlayer);
-                    System.out.println("[Occult Debug] Equipped " + sigilType + " to primary slot");
+                    SigilSyncPackets.syncToClient(serverPlayer);
                     return TypedActionResult.success(stack);
                 }
             }

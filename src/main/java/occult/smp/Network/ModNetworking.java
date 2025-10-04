@@ -6,8 +6,6 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
 import occult.smp.Network.Payloads.*;
-import occult.smp.Sigil.SigilState;
-import occult.smp.Sigil.SigilType;
 import occult.smp.config.GuiConfig;
 import occult.smp.config.KeybindConfig;
 import occult.smp.util.PlayerConfigData;
@@ -19,10 +17,7 @@ public class ModNetworking {
      */
     public static void registerPayloads() {
         // Register S2C payloads
-        PayloadTypeRegistry.playS2C().register(
-            SigilSyncPayload.ID, 
-            SigilSyncPayload.CODEC
-        );
+        // REMOVED: SigilSyncPayload - use SyncBothSigilsPayload instead
         PayloadTypeRegistry.playS2C().register(
             CooldownSyncPayload.ID, 
             CooldownSyncPayload.CODEC
@@ -70,11 +65,7 @@ public class ModNetworking {
      * Register client-side packet receivers (call this from client initialization)
      */
     public static void registerClientReceivers() {
-        ClientPlayNetworking.registerGlobalReceiver(
-            SigilSyncPayload.ID,
-            new SigilSyncHandler()
-        );
-        
+        // REMOVED: SigilSyncHandler
         ClientPlayNetworking.registerGlobalReceiver(
             CooldownSyncPayload.ID,
             new CooldownSyncHandler()
@@ -128,7 +119,7 @@ public class ModNetworking {
             guiConfig.getYPosition()
         ));
         
-        // Sync sigils when player joins
-        syncSigilsToClient(player);
+        // Use centralized sync method
+        SigilSyncPackets.syncToClient(player);
     }
 }
