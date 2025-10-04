@@ -1,65 +1,37 @@
 
 package occult.smp.config;
 
-import net.minecraft.nbt.NbtCompound;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import org.lwjgl.glfw.GLFW;
 
 public class KeybindConfig {
-    private int dropSigilsKey;
-    private int primaryAbilityKey;
-    private int secondaryAbilityKey;
     
-    // Default GLFW key codes
-    public static final int DEFAULT_DROP_SIGILS = 82; // R key
-    public static final int DEFAULT_PRIMARY_ABILITY = 90; // Z key
-    public static final int DEFAULT_SECONDARY_ABILITY = 88; // X key
+    public static KeyBinding PRIMARY_ABILITY;
+    public static KeyBinding SECONDARY_ABILITY;
+    public static KeyBinding OPEN_HUD_SETTINGS;
     
-    public KeybindConfig() {
-        this.dropSigilsKey = DEFAULT_DROP_SIGILS;
-        this.primaryAbilityKey = DEFAULT_PRIMARY_ABILITY;
-        this.secondaryAbilityKey = DEFAULT_SECONDARY_ABILITY;
-    }
-    
-    public int getDropSigilsKey() {
-        return dropSigilsKey;
-    }
-    
-    public void setDropSigilsKey(int key) {
-        this.dropSigilsKey = key;
-    }
-    
-    public int getPrimaryAbilityKey() {
-        return primaryAbilityKey;
-    }
-    
-    public void setPrimaryAbilityKey(int key) {
-        this.primaryAbilityKey = key;
-    }
-    
-    public int getSecondaryAbilityKey() {
-        return secondaryAbilityKey;
-    }
-    
-    public void setSecondaryAbilityKey(int key) {
-        this.secondaryAbilityKey = key;
-    }
-    
-    public void writeNbt(NbtCompound nbt) {
-        nbt.putInt("dropSigilsKey", dropSigilsKey);
-        nbt.putInt("primaryAbilityKey", primaryAbilityKey);
-        nbt.putInt("secondaryAbilityKey", secondaryAbilityKey);
-    }
-    
-    public void readNbt(NbtCompound nbt) {
-        this.dropSigilsKey = nbt.contains("dropSigilsKey") ? nbt.getInt("dropSigilsKey") : DEFAULT_DROP_SIGILS;
-        this.primaryAbilityKey = nbt.contains("primaryAbilityKey") ? nbt.getInt("primaryAbilityKey") : DEFAULT_PRIMARY_ABILITY;
-        this.secondaryAbilityKey = nbt.contains("secondaryAbilityKey") ? nbt.getInt("secondaryAbilityKey") : DEFAULT_SECONDARY_ABILITY;
-    }
-    
-    public KeybindConfig copy() {
-        KeybindConfig copy = new KeybindConfig();
-        copy.dropSigilsKey = this.dropSigilsKey;
-        copy.primaryAbilityKey = this.primaryAbilityKey;
-        copy.secondaryAbilityKey = this.secondaryAbilityKey;
-        return copy;
+    public static void register() {
+        PRIMARY_ABILITY = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.occult-smp.primary_ability",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_R,
+            "category.occult-smp.abilities"
+        ));
+        
+        SECONDARY_ABILITY = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.occult-smp.secondary_ability",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_F,
+            "category.occult-smp.abilities"
+        ));
+        
+        OPEN_HUD_SETTINGS = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.occult-smp.open_hud_settings",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_H,
+            "category.occult-smp.gui"
+        ));
     }
 }

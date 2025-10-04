@@ -2,12 +2,9 @@
 package occult.smp;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.server.network.ServerPlayerEntity;
 import occult.smp.Network.ModNetworking;
-import occult.smp.Network.SigilSyncPackets;
-import occult.smp.Sigil.SigilState;
+import occult.smp.Network.OccultServerEvents;
+import occult.smp.Sigil.AbilitySlot.AbilityInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,31 +14,20 @@ public class OccultSmp implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("Initializing Occult SMP");
+        LOGGER.info("Initializing Occult SMP Mod");
         
-        // Register networking (payloads + handlers)
-        ModNetworking.registerReceivers();
+        // Register network payloads
+        ModNetworking.registerPayloads();
         
-        // Register player join event to sync sigils
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            ServerPlayerEntity player = handler.getPlayer();
-            
-            // Sync sigils from saved state when player joins
-            server.execute(() -> {
-                SigilState state = SigilState.get(player.getWorld());
-                SigilSyncPackets.sendBothSigils(player);
-                LOGGER.info("Synced sigils for player {} on join", player.getName().getString());
-            });
-        });
+        // Register server-side packet receivers
+        ModNetworking.registerServerReceivers();
         
-        // Tick cooldowns every server tick
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            server.getWorlds().forEach(world -> {
-                SigilState state = SigilState.get(world);
-                // Ensure state is loaded
-            });
-        });
+        // Register server events
+        OccultServerEvents.register();
         
-        LOGGER.info("Occult SMP initialized successfully");
+        // Register abilities
+        AbilityInitializer.registerAbilities();
+        
+        LOGGER.info("Occult SMP Mod initialized successfully");
     }
 }

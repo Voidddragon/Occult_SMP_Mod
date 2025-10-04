@@ -8,18 +8,21 @@ import occult.smp.Sigil.Gui.SigilGUI;
 import occult.smp.client.KeybindManager;
 
 public class OccultSmpClient implements ClientModInitializer {
+    
     @Override
     public void onInitializeClient() {
-        // Initialize keybinds
-        KeybindManager.initialize();
+        OccultSmp.LOGGER.info("Initializing Occult SMP Client");
         
-        // Register HUD settings keybind
+        // Register client-side packet receivers
+        ModNetworking.registerClientReceivers();
+        
+        // Register keybinds
+        KeybindManager.register();
+        
+        // Register GUI screens
+        SigilGUI.register();
         OpenHudSettings.register();
         
-        // Register client-side network handlers
-        ModNetworking.registerClientHandlers();
-        
-        // Register HUD overlay
-        SigilGUI.registerHudOverlay();
+        OccultSmp.LOGGER.info("Occult SMP Client initialized successfully");
     }
 }

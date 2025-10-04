@@ -1,21 +1,32 @@
+
 package occult.smp.Sigil;
 
-public enum SigilType {
-    LEAP,
-    ICE,
-    OCEAN,
-    EMERALD,
-    STRENGTH,
-    FIRE,
-    HASTE,
-    END,
-    DRAGON,
-    NONE;
+import net.minecraft.util.StringIdentifiable;
 
-    public static SigilType fromName(String name) {
-        for (SigilType type : SigilType.values()) {
-            if (type.name().equals(name)) return type;
+public enum SigilType implements StringIdentifiable {
+    NONE("none"),
+    FIRE("fire"),
+    WATER("water"),
+    EARTH("earth"),
+    AIR("air");
+
+    private final String name;
+
+    SigilType(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String asString() {
+        return name;
+    }
+
+    public static SigilType fromString(String name) {
+        for (SigilType type : values()) {
+            if (type.name.equals(name)) {
+                return type;
+            }
         }
-        return SigilType.NONE;
+        return NONE;
     }
 }
