@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "occult_smp",
+  "id": "occult-smp",
   "version": "${version}",
   "name": "Occult SMP",
-  "description": "Occult SMP mod",
-  "authors": [],
+  "description": "Sigil-based ability system for Minecraft",
+  "authors": ["Your Name"],
   "contact": {},
   "license": "MIT",
   "icon": "assets/occult_smp/icon.png",
@@ -12,9 +12,6 @@
   "entrypoints": {
     "main": [
       "occult.smp.OccultSmp"
-    ],
-    "fabric-datagen": [
-      "occult.smp.OccultSmpDataGenerator"
     ],
     "client": [
       "occult.smp.OccultSmpClient"
