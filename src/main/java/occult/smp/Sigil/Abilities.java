@@ -7,7 +7,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import occult.smp.Sigil.AbilitySlot.Ability;
 import occult.smp.Sigil.AbilitySlot.AbilityContext;
-import occult.smp.Sigil.AbilitySlot.AbilityRegistry;
 
 public final class Abilities {
     private Abilities() {}

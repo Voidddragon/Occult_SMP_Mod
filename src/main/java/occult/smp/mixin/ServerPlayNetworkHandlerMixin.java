@@ -19,8 +19,9 @@ public class ServerPlayNetworkHandlerMixin {
     public ServerPlayerEntity player;
     
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void onInit(MinecraftServer server, ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
-        // Sync configs when player connects
-        ModNetworking.syncConfigsToPlayer(player);
+    private void onInit(MinecraftServer server, ClientConnection connection, ServerPlayerEntity player, 
+                       ConnectedClientData clientData, CallbackInfo ci) {
+        // Sync player data when they connect
+        ModNetworking.syncPlayerData(player);
     }
 }

@@ -6,7 +6,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import occult.smp.Network.Payload.AbilityActivatePayload;
 import occult.smp.Sigil.AbilitySlot.Ability;
 import occult.smp.Sigil.AbilitySlot.AbilityContext;
-import occult.smp.Sigil.AbilitySlot.AbilityRegistry;
 import occult.smp.Sigil.AbilitySlot.AbilitySlot;
 import occult.smp.Sigil.SigilState;
 import occult.smp.Sigil.SigilType;

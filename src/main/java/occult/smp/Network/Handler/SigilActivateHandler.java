@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
 import occult.smp.Network.Payload.SigilActivatePayload;
 import occult.smp.Sigil.AbilitySlot.AbilityContext;
-import occult.smp.Sigil.AbilitySlot.AbilityRegistry;
 import occult.smp.Sigil.AbilitySlot.AbilitySlot;
 import occult.smp.Sigil.SigilState;
 import occult.smp.Sigil.SigilType;
