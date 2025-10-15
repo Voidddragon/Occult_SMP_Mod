@@ -19,7 +19,7 @@ public class AbilityActivateHandler implements ServerPlayNetworking.PlayPayloadH
     public void receive(AbilityActivatePayload payload, ServerPlayNetworking.Context context) {
         ServerPlayerEntity player = context.player();
         
-        context.server().execute(() -> {
+        player.getServer().execute(() -> {
             SigilState state = SigilState.get(player.getWorld());
             
             // Get the appropriate sigil based on slot

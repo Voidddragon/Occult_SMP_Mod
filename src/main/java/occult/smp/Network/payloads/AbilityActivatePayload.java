@@ -22,7 +22,7 @@ public record AbilityActivatePayload(boolean isPrimary) implements OccultPayload
         return new AbilityActivatePayload(buf.readBoolean());
     }
     
-    private static void write(RegistryByteBuf buf, AbilityActivatePayload payload) {
+    private static void write(AbilityActivatePayload payload, RegistryByteBuf buf) {
         buf.writeBoolean(payload.isPrimary);
     }
     

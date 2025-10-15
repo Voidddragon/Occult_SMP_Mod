@@ -35,8 +35,6 @@ public class SigilSyncPackets {
      * Sync sigils to all online players
      */
     public static void syncToAllClients(ServerPlayerEntity sourcePlayer) {
-        SigilState state = SigilState.get(sourcePlayer.getWorld());
-        
         for (ServerPlayerEntity player : sourcePlayer.getServer().getPlayerManager().getPlayerList()) {
             syncToClient(player);
         }

@@ -14,21 +14,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerEntityMixin implements PlayerConfigData {
-    @Unique
-    private KeybindConfig occult$keybindConfig = new KeybindConfig();
     
     @Unique
     private GuiConfig occult$guiConfig = new GuiConfig();
     
-    @Override
-    public KeybindConfig occult$getKeybindConfig() {
-        return occult$keybindConfig;
-    }
-    
-    @Override
-    public void occult$setKeybindConfig(KeybindConfig config) {
-        this.occult$keybindConfig = config;
-    }
+    @Unique
+    private KeybindConfig occult$keybindConfig = new KeybindConfig();
     
     @Override
     public GuiConfig occult$getGuiConfig() {
@@ -40,43 +31,53 @@ public class ServerPlayerEntityMixin implements PlayerConfigData {
         this.occult$guiConfig = config;
     }
     
+    @Override
+    public KeybindConfig occult$getKeybindConfig() {
+        return occult$keybindConfig;
+    }
+    
+    @Override
+    public void occult$setKeybindConfig(KeybindConfig config) {
+        this.occult$keybindConfig = config;
+    }
+    
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
-    private void occult$writeCustomData(NbtCompound nbt, CallbackInfo ci) {
-        NbtCompound occultData = new NbtCompound();
+    private void saveConfigData(NbtCompound nbt, CallbackInfo ci) {
+        NbtCompound configNbt = new NbtCompound();
         
         // Save keybind config
         NbtCompound keybindNbt = new NbtCompound();
         keybindNbt.putInt("dropSigils", occult$keybindConfig.getDropSigilsKey());
         keybindNbt.putInt("primaryAbility", occult$keybindConfig.getPrimaryAbilityKey());
         keybindNbt.putInt("secondaryAbility", occult$keybindConfig.getSecondaryAbilityKey());
-        occultData.put("keybinds", keybindNbt);
+        configNbt.put("keybinds", keybindNbt);
         
         // Save GUI config
         NbtCompound guiNbt = new NbtCompound();
         guiNbt.putFloat("scale", occult$guiConfig.getScale());
         guiNbt.putInt("xPos", occult$guiConfig.getXPosition());
         guiNbt.putInt("yPos", occult$guiConfig.getYPosition());
-        occultData.put("gui", guiNbt);
+        configNbt.put("gui", guiNbt);
         
-        nbt.put("occult_smp", occultData);
+        nbt.put("occult_smp", configNbt);
     }
     
     @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
-    private void occult$readCustomData(NbtCompound nbt, CallbackInfo ci) {
+    private void loadConfigData(NbtCompound nbt, CallbackInfo ci) {
         if (nbt.contains("occult_smp")) {
-            NbtCompound occultData = nbt.getCompound("occult_smp");
+            NbtCompound configNbt = nbt.getCompound("occult_smp");
             
             // Load keybind config
-            if (occultData.contains("keybinds")) {
-                NbtCompound keybindNbt = occultData.getCompound("keybinds");
+            if (configNbt.contains("keybinds")) {
+                NbtCompound keybindNbt = configNbt.getCompound("keybinds");
                 occult$keybindConfig.setDropSigilsKey(keybindNbt.getInt("dropSigils"));
                 occult$keybindConfig.setPrimaryAbilityKey(keybindNbt.getInt("primaryAbility"));
                 occult$keybindConfig.setSecondaryAbilityKey(keybindNbt.getInt("secondaryAbility"));
             }
             
             // Load GUI config
-            if (occultData.contains("gui")) {
-                NbtCompound guiNbt = occultData.getCompound("gui");
+            if (configNbt.contains("gui")) {
+                NbtCompound guiNbt = configNbt.getCompound("gui");
                 occult$guiConfig.setScale(guiNbt.getFloat("scale"));
                 occult$guiConfig.setXPosition(guiNbt.getInt("xPos"));
                 occult$guiConfig.setYPosition(guiNbt.getInt("yPos"));

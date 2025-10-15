@@ -6,52 +6,65 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import occult.smp.Network.Payload.AbilityActivatePayload;
-import occult.smp.Network.Payload.ReturnSigilsPayload;
+import occult.smp.Network.payloads.AbilityActivatePayload;
+import occult.smp.Network.payloads.ReturnSigilsPayload;
 import org.lwjgl.glfw.GLFW;
 
+/**
+ * Manages client-side keybindings for sigil abilities
+ */
 public class KeybindManager {
     private static KeyBinding primaryAbilityKey;
     private static KeyBinding secondaryAbilityKey;
-    private static KeyBinding dropSigilsKey;
+    private static KeyBinding returnSigilsKey;
     
+    /**
+     * Register all keybindings
+     */
     public static void register() {
         primaryAbilityKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.occult-smp.primary_ability",
             InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_Z,
+            GLFW.GLFW_KEY_R,
             "category.occult-smp.abilities"
         ));
         
         secondaryAbilityKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.occult-smp.secondary_ability",
             InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_X,
+            GLFW.GLFW_KEY_F,
             "category.occult-smp.abilities"
         ));
         
-        dropSigilsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.occult-smp.drop_sigils",
+        returnSigilsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.occult-smp.return_sigils",
             InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_R,
+            GLFW.GLFW_KEY_G,
             "category.occult-smp.abilities"
         ));
         
+        registerHandlers();
+    }
+    
+    /**
+     * Register tick handlers for keybindings
+     */
+    private static void registerHandlers() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
             
-            // Primary ability activation
+            // Primary ability
             while (primaryAbilityKey.wasPressed()) {
                 ClientPlayNetworking.send(new AbilityActivatePayload(true));
             }
             
-            // Secondary ability activation
+            // Secondary ability
             while (secondaryAbilityKey.wasPressed()) {
                 ClientPlayNetworking.send(new AbilityActivatePayload(false));
             }
             
-            // Drop sigils
-            while (dropSigilsKey.wasPressed()) {
+            // Return sigils
+            while (returnSigilsKey.wasPressed()) {
                 ClientPlayNetworking.send(new ReturnSigilsPayload());
             }
         });
@@ -65,7 +78,7 @@ public class KeybindManager {
         return secondaryAbilityKey;
     }
     
-    public static KeyBinding getDropSigilsKey() {
-        return dropSigilsKey;
+    public static KeyBinding getReturnSigilsKey() {
+        return returnSigilsKey;
     }
 }

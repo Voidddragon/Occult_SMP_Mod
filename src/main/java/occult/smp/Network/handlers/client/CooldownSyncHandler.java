@@ -2,19 +2,17 @@
 package occult.smp.Network.handlers.client;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import occult.smp.ClientHudState;
 import occult.smp.Network.payloads.CooldownSyncPayload;
-import occult.smp.Sigil.Gui.SigilGUI;
 
-/**
- * Handles cooldown synchronization from server
- */
-public class CooldownSyncHandler implements ClientPlayNetworking.PlayPayloadHandler<CooldownSyncPayload> {
+public class CooldownSyncHandler {
     
-    @Override
-    public void receive(CooldownSyncPayload payload, ClientPlayNetworking.Context context) {
-        context.client().execute(() -> {
-            SigilGUI.setPrimaryCooldown(payload.primaryCooldown());
-            SigilGUI.setSecondaryCooldown(payload.secondaryCooldown());
+    public static void register() {
+        ClientPlayNetworking.registerGlobalReceiver(CooldownSyncPayload.ID, (payload, context) -> {
+            context.client().execute(() -> {
+                ClientHudState.setPrimaryCooldown(payload.primaryCooldown());
+                ClientHudState.setSecondaryCooldown(payload.secondaryCooldown());
+            });
         });
     }
 }
